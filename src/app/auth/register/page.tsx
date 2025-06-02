@@ -28,14 +28,14 @@ export default function RegisterPage() {
         type="email"
         placeholder="Email"
         value={email}
-        onChange={(e) => setEmail(e.target.value)}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
       />
       <input
         className="w-full p-2 border mb-2"
         type="password"
         placeholder="Password"
         value={password}
-        onChange={(e) => setPassword(e.target.value)}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
       />
       <button
         className="w-full bg-black text-white p-2"
