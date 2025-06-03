@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { db } from '../../lib/firebase'
 import { collection, onSnapshot, query, orderBy } from 'firebase/firestore'
@@ -53,9 +54,25 @@ export default function HomePage() {
             date={p.dropTime}
             renderer={({ hours, minutes, seconds, completed }) =>
               completed ? (
-                <span className="text-green-600 font-bold">Now Live!</span>
+                <>
+                  <span className="text-green-600 font-bold">Now Live!</span>
+                  <Link href={`/payment/${p.id}`}>
+                    <button
+                      disabled={p.stock <= 0}
+                      className={`mt-2 p-2 rounded ${
+                        p.stock <= 0
+                          ? 'bg-gray-400 cursor-not-allowed'
+                          : 'bg-red-600 text-white hover:bg-red-700'
+                      }`}
+                    >
+                      {p.stock <= 0 ? 'Sold Out' : 'Buy Now'}
+                    </button>
+                  </Link>
+                </>
               ) : (
-                <span className="text-blue-600">Drop in {hours}h {minutes}m {seconds}s</span>
+                <span className="text-blue-600">
+                  Drop in {hours}h {minutes}m {seconds}s
+                </span>
               )
             }
           />
