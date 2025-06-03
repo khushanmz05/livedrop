@@ -1,25 +1,21 @@
-// Import the functions you need from the SDKs you need
-import { getApp, getApps, initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
-import { getStorage } from "firebase/storage";
-import { getAuth } from "firebase/auth";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+// lib/firebase.ts
+import { initializeApp, getApps, getApp } from "firebase/app"
+import { getFirestore } from "firebase/firestore"
+import { getAuth } from "firebase/auth"
+import { getStorage } from "firebase/storage"
 
-// Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyBnaDO2pVsrQIJZa8Ln2TvR4URzIYzvTI0",
-  authDomain: "livedrop-sdiwr.firebaseapp.com",
-  projectId: "livedrop-sdiwr",
-  storageBucket: "livedrop-sdiwr.firebasestorage.app",
-  messagingSenderId: "476238082922",
-  appId: "1:476238082922:web:e85336ecc3b8e7e611ab13"
-};
+  apiKey: "AIzaSyAaBlTbT7vvwQv4iJjAuN_BuGf5hWKohUY",
+  authDomain: "livedrop-app.firebaseapp.com",
+  projectId: "livedrop-app",
+  storageBucket: "livedrop-app.appspot.com", // ✅ fix here (.app, not .appstorage.app)
+  messagingSenderId: "885115921378",
+  appId: "1:885115921378:web:dcfc89e162a43830ce8fbb",
+  measurementId: "G-DCFLYML4Q3"
+}
 
-// Initialize Firebase
+const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
 
-const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
-
-export const auth = getAuth(app);
-export const db = getFirestore(app);
-export const storage = getStorage(app);
+export const db = getFirestore(app)
+export const auth = getAuth(app)
+export const storage = getStorage(app)

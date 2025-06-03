@@ -1,5 +1,4 @@
 'use client'
-
 import { useState } from 'react'
 import { db } from '../../../lib/firebase'
 import { collection, addDoc, Timestamp } from 'firebase/firestore'
@@ -14,35 +13,98 @@ export default function AdminPage() {
   const [success, setSuccess] = useState(false)
 
   const handleCreate = async () => {
+    console.log('Handle create...')
+    if (!title || !image || !dropTime || !price || !stock || !description) {
+      alert('Please fill out all fields.')
+      return
+    }
+  
     try {
+      const date = new Date(dropTime)
+      console.log('Date:', date)
+      if (isNaN(date.getTime())) {
+        alert('Invalid drop time format.')
+        return
+      }
+  
       await addDoc(collection(db, 'products'), {
         title,
         image,
-        dropTime: Timestamp.fromDate(new Date(dropTime)),
+        dropTime: Timestamp.fromDate(date),
         price: parseFloat(price),
         stock: parseInt(stock),
         description,
       })
+      console.log('Doc created!')
       setSuccess(true)
     } catch (err) {
-      console.error(err)
+      console.error("Error creating doc:", err)
       setSuccess(false)
     }
   }
-
+  
   return (
-    <div className="max-w-md mx-auto p-4 space-y-4">
+    <div className="relative z-10 max-w-md mx-auto p-4 space-y-4">
       <h1 className="text-2xl font-bold">Create Product Drop</h1>
-      <input type="text" placeholder="Title" className="w-full p-2 border" value={title} onChange={e => setTitle(e.target.value)} />
-      <input type="text" placeholder="Image URL" className="w-full p-2 border" value={image} onChange={e => setImage(e.target.value)} />
-      <input type="datetime-local" className="w-full p-2 border" value={dropTime} onChange={e => setDropTime(e.target.value)} />
-      <input type="number" placeholder="Price" className="w-full p-2 border" value={price} onChange={e => setPrice(e.target.value)} />
-      <input type="number" placeholder="Stock" className="w-full p-2 border" value={stock} onChange={e => setStock(e.target.value)} />
-      <textarea placeholder="Description" className="w-full p-2 border" value={description} onChange={e => setDescription(e.target.value)} />
-      <button className="w-full bg-black text-white p-2" onClick={handleCreate}>Create Drop</button>
+  
+      <input
+        type="text"
+        placeholder="Title"
+        className="w-full p-2 border"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+      />
+  
+      <input
+        type="text"
+        placeholder="Image URL"
+        className="w-full p-2 border"
+        value={image}
+        onChange={(e) => setImage(e.target.value)}
+      />
+  
+      <input
+        type="datetime-local"
+        className="w-full p-2 border"
+        value={dropTime}
+        onChange={(e) => setDropTime(e.target.value)}
+      />
+  
+      <input
+        type="number"
+        placeholder="Price"
+        className="w-full p-2 border"
+        value={price}
+        onChange={(e) => setPrice(e.target.value)}
+      />
+  
+      <input
+        type="number"
+        placeholder="Stock"
+        className="w-full p-2 border"
+        value={stock}
+        onChange={(e) => setStock(e.target.value)}
+      />
+  
+      <textarea
+        placeholder="Description"
+        className="w-full p-2 border"
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
+      />
+  
+  <button
+  type="button"
+  className="w-full bg-red-600 text-white p-4 relative z-[999]"
+  onClick={handleCreate}
+>
+  Create Drop
+</button>
+
       {success && <p className="text-green-600">Drop created!</p>}
     </div>
   )
+  
 }
 
 
