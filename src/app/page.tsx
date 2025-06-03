@@ -43,6 +43,7 @@ export default function HomePage() {
 
   return (
     <div className="p-6 space-y-6">
+      <h1 className="text-3xl font-bold">Welcome to My Store!</h1>
       <h1 className="text-3xl font-bold">Upcoming Drops</h1>
       {products.map(p => (
         <div key={p.id} className="p-4 border rounded-lg shadow-sm">

@@ -11,39 +11,42 @@ type Product = {
   price: number
   stock: number
   description: string
-  dropTime?: any // you can replace `any` with a more precise type if needed
 }
 
-export default function ProductsPage() {
+export default function ProductList() {
   const [products, setProducts] = useState<Product[]>([])
 
   useEffect(() => {
     const unsubscribe = onSnapshot(collection(db, 'products'), (snapshot) => {
-      const updatedProducts = snapshot.docs.map(doc => ({
+      const fetchedProducts = snapshot.docs.map((doc) => ({
         id: doc.id,
-        ...doc.data()
+        ...doc.data(),
       })) as Product[]
-      setProducts(updatedProducts)
+      setProducts(fetchedProducts)
     })
 
     return () => unsubscribe()
   }, [])
 
+  if (products.length === 0) {
+    return <p>No products found.</p>
+  }
+
   return (
-    <div className="max-w-xl mx-auto p-4 space-y-4">
-      <h1 className="text-3xl font-bold mb-4">Products</h1>
-      {products.length === 0 && <p>No products found.</p>}
-      {products.map(product => (
-        <div key={product.id} className="border p-4 rounded shadow-sm">
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      {products.map((product) => (
+        <div key={product.id} className="border p-4 rounded shadow">
           <h2 className="text-xl font-semibold">{product.title}</h2>
           <img
             src={product.image}
             alt={product.title}
-            className="w-full max-h-48 object-cover my-2"
+            className="w-full h-48 object-cover my-2"
           />
-          <p>Price: ${product.price.toFixed(2)}</p>
-          <p>Stock: {product.stock > 0 ? product.stock : 'Sold Out'}</p>
-          <p>{product.description}</p>
+          <p className="font-medium text-gray-700">${product.price.toFixed(2)}</p>
+          <p className="text-sm text-gray-500">
+            {product.stock > 0 ? `Stock: ${product.stock}` : 'Sold Out'}
+          </p>
+          <p className="mt-2">{product.description}</p>
         </div>
       ))}
     </div>
