@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import { db } from '../../../lib/firebase'
 import { collection, addDoc, Timestamp } from 'firebase/firestore'
+import { updateServerTime } from '../../../lib/serverTime' // make sure this exists
 
 export default function AdminPage() {
   const [title, setTitle] = useState('')
@@ -40,6 +41,15 @@ export default function AdminPage() {
     } catch (err) {
       console.error("Error creating doc:", err)
       setSuccess(false)
+    }
+  }
+
+  const handleUpdateServerTime = async () => {
+    try {
+      await updateServerTime()
+      alert('Server time updated!')
+    } catch (err) {
+      alert('Failed to update server time: ' + err)
     }
   }
   
@@ -93,21 +103,23 @@ export default function AdminPage() {
         onChange={(e) => setDescription(e.target.value)}
       />
   
-  <button
-  type="button"
-  className="w-full bg-red-600 text-white p-4 relative z-[999]"
-  onClick={handleCreate}
->
-  Create Drop
-</button>
+      <button
+        type="button"
+        className="w-full bg-red-600 text-white p-4 relative z-[999]"
+        onClick={handleCreate}
+      >
+        Create Drop
+      </button>
+
+      <button
+        type="button"
+        className="w-full bg-blue-600 text-white p-4 mt-4 relative z-[999]"
+        onClick={handleUpdateServerTime}
+      >
+        Update Server Time
+      </button>
 
       {success && <p className="text-green-600">Drop created!</p>}
     </div>
   )
-  
 }
-
-
-//Adds product document to products collection in Firestore.
-//Handles date parsing with Firestore’s Timestamp.
-//Displays confirmation on success.

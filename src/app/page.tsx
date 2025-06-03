@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 import { db } from '../../lib/firebase'
 import { collection, onSnapshot, query, orderBy } from 'firebase/firestore'
 import Countdown from 'react-countdown' 
+import ProductList from './products/page'
 
 type Product = {
   id: string
