@@ -1,0 +1,48 @@
+[
+    {
+      "id": "1",
+      "title": "Cool Sneaker",
+      "image": "/images/sneaker1.jpg",
+      "price": 99.99,
+      "stock": 5,
+      "description": "Limited edition sneaker with unique design",
+      "dropTime": "2025-06-10T15:00:00Z"
+    },
+    {
+      "id": "2",
+      "title": "Retro Hoodie",
+      "image": "/images/hoodie1.jpg",
+      "price": 59.99,
+      "stock": 12,
+      "description": "Comfortable hoodie with retro style",
+      "dropTime": "2025-06-12T18:30:00Z"
+    },
+    {
+      "id": "3",
+      "title": "Tech Backpack",
+      "image": "/images/backpack1.jpg",
+      "price": 120.00,
+      "stock": 8,
+      "description": "Durable backpack with multiple compartments",
+      "dropTime": "2025-06-15T09:00:00Z"
+    },
+    {
+      "id": "4",
+      "title": "Wireless Earbuds",
+      "image": "/images/earbuds1.jpg",
+      "price": 79.99,
+      "stock": 20,
+      "description": "High-quality wireless earbuds with noise cancellation",
+      "dropTime": "2025-06-11T12:00:00Z"
+    },
+    {
+      "id": "5",
+      "title": "Graphic Tee",
+      "image": "/images/tshirt1.jpg",
+      "price": 25.00,
+      "stock": 30,
+      "description": "Soft cotton t-shirt with custom graphic print",
+      "dropTime": "2025-06-13T14:00:00Z"
+    }
+  ]
+  

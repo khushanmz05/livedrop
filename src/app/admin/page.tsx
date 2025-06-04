@@ -8,6 +8,10 @@ import {
 import { db } from '../../../lib/firebase'
 import { useRouter } from 'next/navigation'
 import LogoutButton from '../auth/logout/page'
+import BulkUploadProducts from './bulkuploadproducts'
+import { analyticsPromise } from '../../../lib/firebase'
+import { logEvent } from 'firebase/analytics'
+
 
 type Product = {
   id: string
@@ -91,6 +95,9 @@ export default function AdminProductManager() {
       console.error('Delete error:', err)
       alert('Failed to delete product')
     }
+    await logAdminEvent('product_deleted', {
+      id,
+    }) 
   }
 
   // Clear form and reset editing state
@@ -127,6 +134,19 @@ export default function AdminProductManager() {
           stock: parseInt(stock),
           description,
         })
+        await updateDoc(productRef, {
+          title,
+          image,
+          dropTime: Timestamp.fromDate(date),
+          price: parseFloat(price),
+          stock: parseInt(stock),
+          description,
+        })
+        await logAdminEvent('product_updated', {
+          id: editingProduct.id,
+          title,
+        })
+        
         alert('Product updated!')
       } else {
         await addDoc(collection(db, 'products'), {
@@ -137,6 +157,11 @@ export default function AdminProductManager() {
           stock: parseInt(stock),
           description,
         })
+        await logAdminEvent('product_created', {
+          title,
+          price: parseFloat(price),
+          stock: parseInt(stock),
+        })
         alert('Product created!')
       }
       clearForm()
@@ -145,7 +170,13 @@ export default function AdminProductManager() {
       alert('Error saving product')
     }
   }
-
+  const logAdminEvent = async (eventName: string, eventData: any = {}) => {
+    const analytics = await analyticsPromise
+    if (analytics) {
+      logEvent(analytics, eventName, eventData)
+    }
+  }
+  
   return (
     <div className="max-w-2xl mx-auto p-4 space-y-6">
        <div className="flex justify-end">
@@ -216,6 +247,7 @@ export default function AdminProductManager() {
 
       {/* Products List */}
       <h2 className="text-xl font-bold mt-8">Existing Products</h2>
+      <BulkUploadProducts />
       {products.length === 0 && <p>No products found.</p>}
       {products.map(product => (
         <div key={product.id} className="border p-4 rounded shadow-sm">
