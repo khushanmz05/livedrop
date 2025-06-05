@@ -24,7 +24,7 @@ type Product = {
 }
 
 export default function AdminProductManager() {
-  const { user } = useAuth()
+  const { user, login, logout } = useAuth()
   const router = useRouter()
 
   // List your admin emails here:
@@ -242,6 +242,7 @@ export default function AdminProductManager() {
           >
             Cancel
           </button>
+          
         )}
       </div>
 

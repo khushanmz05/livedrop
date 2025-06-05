@@ -2,32 +2,42 @@
 import { useState } from "react"
 import { db } from "../../../lib/firebase" 
 import { addDoc, collection, serverTimestamp } from "firebase/firestore"
+import { Message } from "../page"
 
-export default function ChatInput() {
-  const [input, setInput] = useState("")
+interface Props {
+  messages: Message[]
+  setMessages: React.Dispatch<React.SetStateAction<Message[]>>
+  onSend?: (text: string) => void
+}
 
-  const sendMessage = async () => {
+export default function ChatInput({ onSend }: ChatInputProps) {
+  const [input, setInput] = useState('')
+
+  const handleSend = () => {
     if (!input.trim()) return
-
-    await addDoc(collection(db, "messages"), {
-      text: input,
-      user: "user",
-      timestamp: serverTimestamp(),
-    })
-
-    setInput("")
+    onSend(input.trim())
+    setInput('')
   }
 
   return (
-    <div className="flex gap-2 p-4">
+    <div className="flex space-x-2">
       <input
+        type="text"
         value={input}
-        onChange={(e) => setInput(e.target.value)}
-        onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-        className="border rounded px-3 py-2 w-full"
-        placeholder="Type a message..."
+        onChange={e => setInput(e.target.value)}
+        className="flex-grow rounded border px-3 py-2 text-black"
+        placeholder="Type your message..."
+        onKeyDown={e => {
+          if (e.key === 'Enter') {
+            e.preventDefault()
+            handleSend()
+          }
+        }}
       />
-      <button onClick={sendMessage} className="bg-blue-500 text-white px-4 py-2 rounded">
+      <button
+        onClick={handleSend}
+        className="bg-pink-400 px-4 py-2 rounded text-white"
+      >
         Send
       </button>
     </div>

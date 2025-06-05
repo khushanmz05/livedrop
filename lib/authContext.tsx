@@ -1,27 +1,36 @@
-// lib/AuthContext.tsx
 'use client'
 
 import { createContext, useContext, useEffect, useState } from 'react'
-import { onAuthStateChanged, User } from 'firebase/auth'
-import { auth } from './firebase'
+import { onAuthStateChanged, signInWithPopup, signOut, User } from 'firebase/auth'
+import { auth, provider } from './firebase'
 
-const AuthContext = createContext<{ user: User | null }>({ user: null })
+interface AuthContextType {
+  user: User | null
+  login: () => void
+  logout: () => void
+}
 
-export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+const AuthContext = createContext<AuthContextType | undefined>(undefined)
+
+export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user)
-    })
-    return () => unsubscribe()
+    return onAuthStateChanged(auth, setUser)
   }, [])
 
+  const login = () => signInWithPopup(auth, provider)
+  const logout = () => signOut(auth)
+
   return (
-    <AuthContext.Provider value={{ user }}>
+    <AuthContext.Provider value={{ user, login, logout }}>
       {children}
     </AuthContext.Provider>
   )
 }
 
-export const useAuth = () => useContext(AuthContext)
+export const useAuth = () => {
+  const context = useContext(AuthContext)
+  if (!context) throw new Error('useAuth must be used inside AuthProvider')
+  return context
+}

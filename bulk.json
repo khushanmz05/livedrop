@@ -1,48 +1,83 @@
 [
-    {
-      "id": "1",
-      "title": "Cool Sneaker",
-      "image": "/images/sneaker1.jpg",
-      "price": 99.99,
-      "stock": 5,
-      "description": "Limited edition sneaker with unique design",
-      "dropTime": "2025-06-10T15:00:00Z"
-    },
-    {
-      "id": "2",
-      "title": "Retro Hoodie",
-      "image": "/images/hoodie1.jpg",
-      "price": 59.99,
-      "stock": 12,
-      "description": "Comfortable hoodie with retro style",
-      "dropTime": "2025-06-12T18:30:00Z"
-    },
-    {
-      "id": "3",
-      "title": "Tech Backpack",
-      "image": "/images/backpack1.jpg",
-      "price": 120.00,
-      "stock": 8,
-      "description": "Durable backpack with multiple compartments",
-      "dropTime": "2025-06-15T09:00:00Z"
-    },
-    {
-      "id": "4",
-      "title": "Wireless Earbuds",
-      "image": "/images/earbuds1.jpg",
-      "price": 79.99,
-      "stock": 20,
-      "description": "High-quality wireless earbuds with noise cancellation",
-      "dropTime": "2025-06-11T12:00:00Z"
-    },
-    {
-      "id": "5",
-      "title": "Graphic Tee",
-      "image": "/images/tshirt1.jpg",
-      "price": 25.00,
-      "stock": 30,
-      "description": "Soft cotton t-shirt with custom graphic print",
-      "dropTime": "2025-06-13T14:00:00Z"
-    }
-  ]
-  
+  {
+    "id": "1",
+    "title": "Smart Thermo Bottle",
+    "image": "/images/bottle1.jpg",
+    "price": 39.95,
+    "stock": 15,
+    "description": "Keeps drinks at the perfect temperature with smart display",
+    "dropTime": "2025-06-08T10:00:00Z"
+  },
+  {
+    "id": "2",
+    "title": "Minimalist Wallet",
+    "image": "/images/wallet1.jpg",
+    "price": 29.99,
+    "stock": 40,
+    "description": "Slim RFID-blocking wallet made from vegan leather",
+    "dropTime": "2025-06-09T16:00:00Z"
+  },
+  {
+    "id": "3",
+    "title": "Bluetooth LED Lamp",
+    "image": "/images/lamp1.jpg",
+    "price": 45.00,
+    "stock": 25,
+    "description": "Color-changing lamp controlled via smartphone app",
+    "dropTime": "2025-06-11T19:30:00Z"
+  },
+  {
+    "id": "4",
+    "title": "Gaming Mousepad XL",
+    "image": "/images/mousepad1.jpg",
+    "price": 22.49,
+    "stock": 50,
+    "description": "Extra-large RGB mousepad with anti-slip base",
+    "dropTime": "2025-06-12T13:15:00Z"
+  },
+  {
+    "id": "5",
+    "title": "Noise-Blocking Sleep Mask",
+    "image": "/images/sleepmask1.jpg",
+    "price": 18.00,
+    "stock": 33,
+    "description": "Comfortable mask with built-in white noise generator",
+    "dropTime": "2025-06-13T22:00:00Z"
+  },
+  {
+    "id": "6",
+    "title": "Adjustable Standing Desk",
+    "image": "/images/desk1.jpg",
+    "price": 259.99,
+    "stock": 5,
+    "description": "Electric standing desk with memory presets and cable management",
+    "dropTime": "2025-06-14T09:45:00Z"
+  },
+  {
+    "id": "7",
+    "title": "Retro Pocket Console",
+    "image": "/images/console1.jpg",
+    "price": 89.99,
+    "stock": 12,
+    "description": "Handheld console with 300 classic games preloaded",
+    "dropTime": "2025-06-15T18:00:00Z"
+  },
+  {
+    "id": "8",
+    "title": "Eco Bamboo Toothbrush Set",
+    "image": "/images/toothbrush1.jpg",
+    "price": 12.00,
+    "stock": 60,
+    "description": "Set of 4 biodegradable bamboo toothbrushes",
+    "dropTime": "2025-06-16T08:00:00Z"
+  },
+  {
+    "id": "9",
+    "title": "Magnetic Cable Organizer",
+    "image": "/images/cable1.jpg",
+    "price": 14.95,
+    "stock": 100,
+    "description": "Keep your cables neat with this magnetic snap system",
+    "dropTime": "2025-06-17T15:30:00Z"
+  }
+]

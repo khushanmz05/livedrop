@@ -4,30 +4,28 @@ import { db } from "../../../lib/firebase"
 import { collection, onSnapshot, orderBy, query } from "firebase/firestore"
 
 type Message = {
+  id: string
   text: string
-  user: string
+  sender?: string
   timestamp?: any
 }
 
-export default function ChatMessages() {
-  const [messages, setMessages] = useState<Message[]>([])
+type ChatMessagesProps = {
+  messages: Message[]
+}
 
-  useEffect(() => {
-    const q = query(collection(db, "messages"), orderBy("timestamp", "asc"))
-    const unsub = onSnapshot(q, snap => {
-      setMessages(snap.docs.map(doc => doc.data() as Message))
-    })
-
-    return () => unsub()
-  }, [])
-
+export default function ChatMessages({ messages }: { messages: Message[] }) {
   return (
-    <div className="p-4 space-y-2 h-[300px] overflow-y-auto">
-      {messages.map((msg, i) => (
-        <div key={i} className={`p-2 rounded ${msg.user === "user" ? "bg-blue-100" : "bg-gray-200"}`}>
-          <strong>{msg.user}:</strong> {msg.text}
+    <div>
+      {messages.map((msg, index) => (
+        <div
+          key={msg.id ?? `${msg.timestamp}-${index}`}
+          className="mb-2 text-white"
+        >
+          <strong>{msg.user ?? 'Anonymous'}:</strong> {msg.text}
         </div>
       ))}
     </div>
   )
 }
+
