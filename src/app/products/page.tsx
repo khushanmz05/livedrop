@@ -139,10 +139,13 @@ export default function ProductsPage() {
                         </span>
                       </div>
 
-                      <div className="mt-4 flex gap-3">
-                        <Link href={`/payment/${product.id}`} legacyBehavior>
-                          <a
-                            className={`flex-1 text-center p-2 rounded ${
+                      <div className="mt-4 flex flex-col gap-2">
+                        <Link
+                          href={`/payment/${product.id}`}
+                          passHref
+                        >
+                          <div
+                            className={`text-center p-2 rounded ${
                               product.stock <= 0
                                 ? 'bg-gray-700 cursor-not-allowed pointer-events-none'
                                 : 'bg-red-600 text-white hover:bg-red-700'
@@ -150,7 +153,7 @@ export default function ProductsPage() {
                             aria-disabled={product.stock <= 0}
                           >
                             {product.stock <= 0 ? 'Sold Out' : 'Buy Now'}
-                          </a>
+                          </div>
                         </Link>
 
                         <button
@@ -162,7 +165,7 @@ export default function ProductsPage() {
                             })
                           }
                           disabled={product.stock <= 0}
-                          className={`flex-1 p-2 rounded ${
+                          className={`p-2 rounded ${
                             product.stock <= 0
                               ? 'bg-gray-700 cursor-not-allowed'
                               : 'bg-blue-600 text-white hover:bg-blue-700'
@@ -179,7 +182,6 @@ export default function ProductsPage() {
           )}
         </main>
 
-        {/* Coming Soon Section */}
         {comingSoonProducts.length > 0 && (
           <section className="bg-gray-950 py-10 px-6 mt-auto">
             <div className="container mx-auto">
@@ -207,7 +209,7 @@ export default function ProductsPage() {
 
                         {dropDate && (
                           <div className="text-yellow-300 font-semibold text-sm">
-                          <DropCountdown dropTime={dropDate} durationSeconds={300} />
+                            <DropCountdown dropTime={dropDate} durationSeconds={300} />
                           </div>
                         )}
                       </div>

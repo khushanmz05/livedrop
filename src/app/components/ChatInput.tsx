@@ -2,7 +2,7 @@
 import { useState } from "react"
 import { db } from "../../../lib/firebase" 
 import { addDoc, collection, serverTimestamp } from "firebase/firestore"
-import { Message } from "../page"
+import { Message } from "../types"
 
 interface Props {
   messages: Message[]
@@ -10,7 +10,7 @@ interface Props {
   onSend?: (text: string) => void
 }
 
-export default function ChatInput({ onSend }: ChatInputProps) {
+export default function ChatInput({ onSend }: Props) {
   const [input, setInput] = useState('')
 
   const handleSend = () => {

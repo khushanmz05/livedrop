@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useRef } from "react"
-import { db } from "@/lib/firebase"
+import { db } from "../../../lib/firebase"; 
 import { collection, onSnapshot, addDoc, serverTimestamp, query, orderBy } from "firebase/firestore"
 
 export default function BotResponder() {

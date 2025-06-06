@@ -16,16 +16,21 @@ type ChatMessagesProps = {
 
 export default function ChatMessages({ messages }: { messages: Message[] }) {
   return (
-    <div>
-      {messages.map((msg, index) => (
+    <div className="space-y-2 text-sm">
+      {messages.map((msg, idx) => (
         <div
-          key={msg.id ?? `${msg.timestamp}-${index}`}
-          className="mb-2 text-white"
+          key={idx}
+          className={`p-2 rounded-md max-w-xs ${
+            msg.user === 'bot'
+              ? 'bg-purple-700/30 text-purple-100 self-start'
+              : 'bg-pink-600/30 text-pink-100 self-end ml-auto'
+          }`}
         >
-          <strong>{msg.user ?? 'Anonymous'}:</strong> {msg.text}
+          {msg.text}
         </div>
       ))}
     </div>
   )
 }
+
 
