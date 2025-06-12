@@ -67,7 +67,7 @@ export default function Home() {
 
   const handleBuyNow = (product: Product) => {
     alert(`Buying "${product.title}" for $${product.price.toFixed(2)}!`)
-    router.push(`/payment?productId=${product.id}`)  // works now
+    router.push(`/payment/${product.id}`)  // works now
   }
 
   const handleNewMessage = async (text: string) => {
