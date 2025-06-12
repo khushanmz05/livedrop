@@ -43,22 +43,27 @@ export default function AboutPage() {
 
         {/* Team Section */}
         <section>
-          <h2 className="text-2xl font-bold mb-6">Meet the Team</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-            {[
-              { name: 'Khushan', role: 'Lead Developer' },
-            ].map((member) => (
-              <div
-                key={member.name}
-                className="bg-white p-6 rounded-xl shadow text-center hover:shadow-md transition"
-              >
-                <div className="w-20 h-20 mx-auto bg-indigo-100 rounded-full mb-3" />
-                <h4 className="font-semibold text-lg">{member.name}</h4>
-                <p className="text-sm text-gray-600">{member.role}</p>
-              </div>
-            ))}
-          </div>
-        </section>
+  <h2 className="text-2xl font-bold mb-6">Meet the Team</h2>
+  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+    {[
+      { name: 'Khushan', role: 'Lead Developer', image: '../kk.jpeg' },
+    ].map((member) => (
+      <div
+        key={member.name}
+        className="bg-white p-6 rounded-xl shadow text-center hover:shadow-md transition"
+      >
+        {/* Replace colored circle with image */}
+        <img
+          src={member.image}
+          alt={`${member.name}'s photo`}
+          className="w-20 h-20 mx-auto rounded-full object-cover mb-3"
+        />
+        <h4 className="font-semibold text-lg">{member.name}</h4>
+        <p className="text-sm text-gray-600">{member.role}</p>
+      </div>
+    ))}
+  </div>
+</section>
 
         {/* Timeline */}
         <section>

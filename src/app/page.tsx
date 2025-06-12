@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { collection, getDocs } from 'firebase/firestore'
+import { collection, getDocs, addDoc } from 'firebase/firestore'
 import { db } from '../../lib/firebase'
 import ChatInput from './components/ChatInput'
 import ChatMessages from './components/ChatMessages'
@@ -10,6 +10,10 @@ import { TransitionGroup, CSSTransition } from 'react-transition-group'
 import { useCart } from '../../lib/cartContext'
 import '../../styles/global.css'
 import { useRouter } from 'next/navigation'
+import PurchaseFeed from "./components/PurchaseFeed";
+import { getAuth } from 'firebase/auth'
+
+
 
 type Product = {
   id: string
@@ -31,8 +35,8 @@ type Message = {
 export default function Home() {
   const router = useRouter()
   const [products, setProducts] = useState<Product[]>([])
+  const [searchTerm, setSearchTerm] = useState('')
   const [messages, setMessages] = useState<Message[]>([
-  
     { text: 'Hi! How can I help you today?', user: 'bot', timestamp: Date.now() },
   ])
   const { cart, addToCart } = useCart()
@@ -66,9 +70,10 @@ export default function Home() {
   }
 
   const handleBuyNow = (product: Product) => {
-    alert(`Buying "${product.title}" for $${product.price.toFixed(2)}!`)
-    router.push(`/payment/${product.id}`)  // works now
-  }
+  alert(`Buying "${product.title}" for $${product.price.toFixed(2)}!`)
+  router.push(`/payment/${product.id}`)
+}
+
 
   const handleNewMessage = async (text: string) => {
     const trimmed = text.trim()
@@ -112,9 +117,13 @@ export default function Home() {
     }, 600)
   }
 
-  // ✅ JSX return block starts here
+  const filteredProducts = products.filter(product =>
+    product.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    product.description.toLowerCase().includes(searchTerm.toLowerCase())
+  )
+
   return (
-    <>
+    <main className="animate-fadeInUp px-4 py-6 max-w-7xl mx-auto">
       <header className="text-center py-6 border-b border-pink-600">
         <h1 className="text-6xl font-extrabold bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-600 text-transparent bg-clip-text drop-shadow">
           🌟 LiveDrop Market
@@ -124,12 +133,22 @@ export default function Home() {
         </p>
       </header>
 
-      <div className="grid sm:grid-cols-2 gap-6">
-        {products.length === 0 ? (
-          <p className="text-center text-gray-400 text-lg">No products found.</p>
+      <div className="mt-6 mb-4 max-w-md mx-auto">
+        <input
+          type="text"
+          placeholder="🔍 Search products..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="w-full px-4 py-2 rounded-md bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-pink-500"
+        />
+      </div>
+
+      <div className="grid sm:grid-cols-2 gap-6 mt-6">
+        {filteredProducts.length === 0 ? (
+          <p className="text-center text-gray-400 text-lg">No matching products found.</p>
         ) : (
           <TransitionGroup component={null}>
-            {products.map(product => {
+            {filteredProducts.map(product => {
               const isLive = !product.dropTime || product.dropTime <= new Date()
               const hasValidDropTime =
                 product.dropTime instanceof Date &&
@@ -194,22 +213,26 @@ export default function Home() {
         )}
       </div>
 
-      {/* Chat Section */}
-      <div className="max-w-md mx-auto bg-gradient-to-br from-gray-800 via-gray-900 to-black p-4 rounded-lg border border-purple-700 shadow-lg mt-6">
-        <h2 className="text-lg sm:text-xl font-bold mb-3 text-pink-400 tracking-wide">
-          💬 Live Chat Support
-        </h2>
-
-        <div className="max-h-56 overflow-y-auto bg-black/30 rounded-md p-3 border border-gray-700 space-y-2">
-          <ChatMessages messages={messages} />
+      <div className="flex flex-col md:flex-row gap-6 mt-10">
+        <div className="flex-1 max-w-md">
+          <PurchaseFeed />
         </div>
 
-        <div className="mt-3">
-          <ChatInput onSend={handleNewMessage} />
+        <div className="flex-1 max-w-md mx-auto md:mx-0">
+          <div className="bg-gradient-to-br from-gray-800 via-gray-900 to-black p-4 rounded-lg border border-purple-700 shadow-lg">
+            <h2 className="text-lg sm:text-xl font-bold mb-3 text-pink-400 tracking-wide">
+              💬 Live Chat Support
+            </h2>
+            <div className="max-h-56 overflow-y-auto bg-black/30 rounded-md p-3 border border-gray-700 space-y-2">
+              <ChatMessages messages={messages} />
+            </div>
+            <div className="mt-3">
+              <ChatInput onSend={handleNewMessage} />
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Footer */}
       <footer className="text-center text-sm text-gray-400 border-t border-pink-600 pt-4 mt-10">
         <p>
           Made with <span className="text-red-400">♥</span> by LiveDrop Team ·{' '}
@@ -218,6 +241,6 @@ export default function Home() {
           </span>
         </p>
       </footer>
-    </>
+    </main>
   )
 }

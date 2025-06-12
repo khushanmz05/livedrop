@@ -23,20 +23,17 @@ export default function ProductsPage() {
 
   useEffect(() => {
     const unsubscribe = onSnapshot(collection(db, 'products'), (snapshot) => {
-      const updatedProducts = snapshot.docs.map(doc => {
-        const data = doc.data()
-        return {
-          id: doc.id,
-          ...data,
-        } as Product
-      })
+      const updatedProducts = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+      })) as Product[]
       setProducts(updatedProducts)
     })
 
     return () => unsubscribe()
   }, [])
 
-  function parseDropTime(dropTime?: Timestamp | string | null) {
+  const parseDropTime = (dropTime?: Timestamp | string | null): Date | undefined => {
     if (!dropTime) return undefined
     if (typeof dropTime === 'string') {
       const date = new Date(dropTime)
@@ -51,22 +48,21 @@ export default function ProductsPage() {
   const now = new Date()
 
   const availableProducts = products.filter(p => {
-    const dropDate = parseDropTime(p.dropTime)
-    return !dropDate || dropDate <= now
+    const parsed = parseDropTime(p.dropTime)
+    return !parsed || parsed <= now
   })
 
   const comingSoonProducts = products.filter(p => {
-    const dropDate = parseDropTime(p.dropTime)
-    return dropDate && dropDate > now
+    const parsed = parseDropTime(p.dropTime)
+    return parsed && parsed > now
   })
 
   return (
     <>
       <style>{`
         @keyframes gradientShift {
-          0% { background-position: 0% 50%; }
+          0%, 100% { background-position: 0% 50%; }
           50% { background-position: 100% 50%; }
-          100% { background-position: 0% 50%; }
         }
         .animated-gradient {
           background-size: 200% 200%;
@@ -98,30 +94,35 @@ export default function ProductsPage() {
             Discover our Products
           </h1>
           <p className="mt-2 text-lg max-w-xl mx-auto text-white/90">
-            Browse through our curated selection of quality items crafted just for you.
+            Browse our curated selection of high-quality items crafted just for you.
           </p>
         </header>
 
         <main className="flex-grow container mx-auto px-6 py-10">
           {availableProducts.length > 0 && (
-            <>
-              <h2 className="text-2xl font-bold mb-4 text-white">Available Now</h2>
+            <section>
+             <h2
+            className="text-3xl font-extrabold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-green-300 via-blue-400 to-purple-500 animate-pulse"
+            >
+            Available Now
+            </h2>
               <div className="grid sm:grid-cols-2 gap-6 mb-16">
-                {availableProducts.map((product, index) => (
-                  <div
+                {availableProducts.map((product, i) => (
+                  <article
                     key={product.id}
                     className="border rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300 bg-gray-900 flex flex-col fade-in"
-                    style={{ animationDelay: `${index * 0.1}s` }}
+                    style={{ animationDelay: `${i * 0.1}s` }}
                   >
                     <img
                       src={product.image}
                       alt={product.title}
                       className="w-full h-48 object-cover rounded-t-lg"
+                      loading="lazy"
                     />
-                    <div className="p-4 flex flex-col flex-grow text-white">
-                      <h2 className="text-2xl font-semibold mb-2 text-indigo-400">
+                    <div className="p-4 flex flex-col flex-grow">
+                      <h3 className="text-2xl font-semibold mb-2 text-indigo-400">
                         {product.title}
-                      </h2>
+                      </h3>
                       <p className="text-gray-300 flex-grow">{product.description}</p>
 
                       <div className="mt-4 flex justify-between items-center">
@@ -140,20 +141,18 @@ export default function ProductsPage() {
                       </div>
 
                       <div className="mt-4 flex flex-col gap-2">
-                        <Link
-                          href={`/payment/${product.id}`}
-                          passHref
-                        >
-                          <div
-                            className={`text-center p-2 rounded ${
+                        <Link href={`/payment/${product.id}`} passHref>
+                          <button
+                            className={`w-full p-2 rounded ${
                               product.stock <= 0
                                 ? 'bg-gray-700 cursor-not-allowed pointer-events-none'
                                 : 'bg-red-600 text-white hover:bg-red-700'
                             }`}
                             aria-disabled={product.stock <= 0}
+                            disabled={product.stock <= 0}
                           >
                             {product.stock <= 0 ? 'Sold Out' : 'Buy Now'}
-                          </div>
+                          </button>
                         </Link>
 
                         <button
@@ -175,45 +174,49 @@ export default function ProductsPage() {
                         </button>
                       </div>
                     </div>
-                  </div>
+                  </article>
                 ))}
               </div>
-            </>
+            </section>
           )}
         </main>
 
         {comingSoonProducts.length > 0 && (
           <section className="bg-gray-950 py-10 px-6 mt-auto">
             <div className="container mx-auto">
-              <h2 className="text-2xl font-bold mb-6 text-white text-center">Coming Soon</h2>
-              <div className="grid sm:grid-cols-2 gap-6">
-                {comingSoonProducts.map((product, index) => {
-                  const dropDate = parseDropTime(product.dropTime)
+              <h2
+              className="text-3xl font-extrabold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 animate-pulse text-center"
+                >
+              Coming Soon
+              </h2>
 
+              <div className="grid sm:grid-cols-2 gap-6">
+                {comingSoonProducts.map((product, i) => {
+                  const dropDate = parseDropTime(product.dropTime)
                   return (
-                    <div
+                    <article
                       key={product.id}
                       className="border rounded-lg shadow-lg transition-shadow duration-300 bg-gray-800 flex flex-col fade-in opacity-80"
-                      style={{ animationDelay: `${index * 0.1}s` }}
+                      style={{ animationDelay: `${i * 0.1}s` }}
                     >
                       <img
                         src={product.image}
                         alt={product.title}
                         className="w-full h-48 object-cover rounded-t-lg grayscale"
+                        loading="lazy"
                       />
-                      <div className="p-4 flex flex-col text-white">
-                        <h2 className="text-2xl font-semibold mb-2 text-gray-400">
+                      <div className="p-4 flex flex-col">
+                        <h3 className="text-2xl font-semibold mb-2 text-gray-400">
                           {product.title}
-                        </h2>
+                        </h3>
                         <p className="text-gray-400 mb-2">{product.description}</p>
-
                         {dropDate && (
                           <div className="text-yellow-300 font-semibold text-sm">
                             <DropCountdown dropTime={dropDate} durationSeconds={300} />
                           </div>
                         )}
                       </div>
-                    </div>
+                    </article>
                   )
                 })}
               </div>
@@ -221,10 +224,8 @@ export default function ProductsPage() {
           </section>
         )}
 
-        <footer className="p-6 text-center animated-gradient bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white shadow-inner">
-          <p className="text-sm">
-            &copy; {new Date().getFullYear()} Your Store. All rights reserved.
-          </p>
+        <footer className="p-6 text-center animated-gradient bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 shadow-inner">
+          <p className="text-sm">&copy; {new Date().getFullYear()} Your Store. All rights reserved.</p>
         </footer>
       </div>
     </>
