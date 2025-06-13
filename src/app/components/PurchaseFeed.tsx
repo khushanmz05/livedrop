@@ -14,7 +14,11 @@ type Purchase = {
   timestamp: Date
 }
 
-export default function PurchaseFeed() {
+type PurchaseFeedProps = {
+  refreshTrigger?: boolean
+}
+
+export default function PurchaseFeed({ refreshTrigger }: PurchaseFeedProps) {
   const [purchases, setPurchases] = useState<Purchase[]>([])
 
   useEffect(() => {
@@ -35,8 +39,8 @@ export default function PurchaseFeed() {
     }
 
     fetchPurchases()
-  }, [])
-
+  }, [refreshTrigger]) // <--- run effect every time refreshTrigger changes
+  
   return (
     <div className="bg-black border border-purple-800 rounded-lg p-4 shadow-md">
       <h2 className="text-pink-400 text-lg font-bold mb-3 tracking-wide">🔥 Latest Purchases</h2>

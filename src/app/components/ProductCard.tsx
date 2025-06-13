@@ -17,7 +17,7 @@ export default function ProductCard({ product }: { product: Product }) {
   return (
     <div
       key={product.id}
-      className="...polished card styles here..."
+      className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-4 shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-[1.02]"
     >
       {/* ... JSX from polished card ... */}
     </div>

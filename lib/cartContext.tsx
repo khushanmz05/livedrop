@@ -1,12 +1,20 @@
 'use client'
 
-import React, { createContext, useContext, useState, ReactNode } from 'react'
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react'
 
-type CartItem = {
+export type CartItem = {
   id: string
   title: string
   price: number
   quantity: number
+}
+
+export type Product = {
+  id: string
+  title: string
+  price: number
+  stock: number
+  image?: string
 }
 
 type CartContextType = {
@@ -14,12 +22,37 @@ type CartContextType = {
   addToCart: (item: Omit<CartItem, 'quantity'>) => void
   removeFromCart: (id: string) => void
   clearCart: () => void
+  products: Product[]
+  decreaseStockOnCheckout: (cart: CartItem[]) => void
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined)
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [cart, setCart] = useState<CartItem[]>([])
+
+  // Initialize products with stock — **replace this with your real products data**
+  const [products, setProducts] = useState<Product[]>([
+    { id: '1', title: 'Product 1', price: 10, stock: 10 },
+    { id: '2', title: 'Product 2', price: 20, stock: 5 },
+    // Add all your products here
+  ])
+
+  useEffect(() => {
+    const stored = localStorage.getItem('cart')
+    if (stored) {
+      try {
+        setCart(JSON.parse(stored))
+      } catch (e) {
+        console.error('Failed to parse cart from localStorage', e)
+        setCart([])
+      }
+    }
+  }, [])
+
+  useEffect(() => {
+    localStorage.setItem('cart', JSON.stringify(cart))
+  }, [cart])
 
   function addToCart(item: Omit<CartItem, 'quantity'>) {
     setCart((prevCart) => {
@@ -41,8 +74,26 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setCart([])
   }
 
+  // New: decrease stock based on cart contents when user checks out
+  function decreaseStockOnCheckout(cart: CartItem[]) {
+    setProducts((prevProducts) =>
+      prevProducts.map((product) => {
+        const cartItem = cart.find(item => item.id === product.id)
+        if (cartItem) {
+          return {
+            ...product,
+            stock: Math.max(0, product.stock - cartItem.quantity), // prevent negative stock
+          }
+        }
+        return product
+      })
+    )
+  }
+
   return (
-    <CartContext.Provider value={{ cart, addToCart, removeFromCart, clearCart }}>
+    <CartContext.Provider
+      value={{ cart, addToCart, removeFromCart, clearCart, products, decreaseStockOnCheckout }}
+    >
       {children}
     </CartContext.Provider>
   )

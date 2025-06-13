@@ -2,133 +2,172 @@
 
 import { motion } from 'framer-motion'
 
-const stats = [
-  { value: '1,000+', label: 'Happy Customers' },
-  { value: '50+', label: 'Products Shipped' },
-  { value: '99%', label: 'Satisfaction Rate' },
-]
-
 export default function AboutPage() {
+  const cards = [
+    {
+      title: 'Team',
+      frontContent: 'Meet Our Talented Team',
+      backContent: (
+        <>
+          <p className="mb-2">👩‍💻 <strong>Khushan</strong> — Lead Developer</p>
+          <p>🧑‍🎨 <strong>Jane</strong> — UI/UX Designer</p>
+          <p>🛠️ <strong>Mike</strong> — Backend Engineer</p>
+        </>
+      ),
+    },
+    {
+      title: 'Mission',
+      frontContent: 'Our Mission Statement',
+      backContent: (
+        <p>
+          To build a lightning-fast, user-friendly e-commerce platform combining
+          sleek design with robust technology — using <strong>Next.js</strong> and <strong>Firebase</strong>.
+        </p>
+      ),
+    },
+    {
+      title: 'Customer Trust',
+      frontContent: 'Trusted by Customers',
+      backContent: (
+        <p>
+          Over <strong>1,000+ happy customers</strong> with a <strong>99% satisfaction rate</strong>.
+          We value transparency, quality, and your happiness.
+        </p>
+      ),
+    },
+  ]
+
+  const coreValues = [
+    {
+      icon: '💡',
+      title: 'Innovation',
+      description: 'We constantly push boundaries to create cutting-edge solutions.',
+    },
+    {
+      icon: '🤝',
+      title: 'Integrity',
+      description: 'Honesty and transparency guide everything we do.',
+    },
+    {
+      icon: '🌍',
+      title: 'Sustainability',
+      description: 'Building products with respect for people and the planet.',
+    },
+    {
+      icon: '🚀',
+      title: 'Excellence',
+      description: 'Delivering high-quality results with passion and precision.',
+    },
+  ]
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-indigo-100 text-gray-800">
-      {/* Header */}
-      <header className="py-6 shadow bg-white">
-        <div className="max-w-5xl mx-auto px-4">
-          <h1 className="text-3xl font-extrabold tracking-tight">About Us</h1>
-        </div>
-      </header>
-
-      {/* Main Content */}
-      <motion.main
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="max-w-5xl mx-auto px-4 py-12 space-y-20"
-      >
-        {/* Vision */}
-        <section className="text-center">
-          <h2 className="text-2xl font-bold mb-4">Our Vision</h2>
-          <blockquote className="italic text-lg max-w-2xl mx-auto text-gray-600">
-            “To redefine online shopping by merging aesthetics with performance — one product at a time.”
-          </blockquote>
-        </section>
-
-        {/* Mission */}
-        <section className="text-center">
-          <h2 className="text-2xl font-bold mb-4">Our Mission</h2>
-          <p className="text-lg max-w-2xl mx-auto">
-            We’re building a modern e-commerce experience using cutting-edge tools like <strong>Next.js</strong> and <strong>Firebase</strong>, with a focus on speed, design, and simplicity.
+    <>
+      <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&display=swap"
+        rel="stylesheet"
+      />
+      <div className="bg-gradient-to-r from-indigo-900 via-purple-900 to-pink-900 min-h-screen text-white font-poppins transition-colors duration-300">
+        <header className="py-16 text-center px-6">
+          <h1 className="text-6xl font-extrabold mb-4 tracking-widest bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 via-red-500 to-pink-600 drop-shadow-lg">
+            About Us
+          </h1>
+          <p className="text-2xl opacity-95 max-w-xl mx-auto font-semibold drop-shadow-md">
+            Driven by a deep passion for innovation and built with meticulous precision, our solutions are designed to exceed expectations. Every detail is thoughtfully crafted to deliver outstanding performance and reliability. At the heart of our work lies a commitment to excellence, ensuring that what we create not only meets your needs but also inspires confidence and lasting value.
           </p>
-        </section>
+        </header>
 
-        {/* Team Section */}
-        <section>
-  <h2 className="text-2xl font-bold mb-6">Meet the Team</h2>
-  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-    {[
-      { name: 'Khushan', role: 'Lead Developer', image: '../kk.jpeg' },
-    ].map((member) => (
-      <div
-        key={member.name}
-        className="bg-white p-6 rounded-xl shadow text-center hover:shadow-md transition"
-      >
-        {/* Replace colored circle with image */}
-        <img
-          src={member.image}
-          alt={`${member.name}'s photo`}
-          className="w-20 h-20 mx-auto rounded-full object-cover mb-3"
-        />
-        <h4 className="font-semibold text-lg">{member.name}</h4>
-        <p className="text-sm text-gray-600">{member.role}</p>
-      </div>
-    ))}
-  </div>
-</section>
-
-        {/* Timeline */}
-        <section>
-          <h2 className="text-2xl font-bold mb-6">Our Journey</h2>
-          <ul className="space-y-4 border-l-4 border-indigo-500 pl-6 text-gray-700">
-            <li>
-              <span className="font-bold">Week 1</span>: Project inception & planning 🧠
-            </li>
-            <li>
-              <span className="font-bold">Week 2</span>: First prototype release 💻
-            </li>
-            <li>
-              <span className="font-bold">Week 3</span>: Launching the product 🚀
-            </li>
-          </ul>
-        </section>
-
-        {/* Stats */}
-        <section className="text-center">
-          <h2 className="text-2xl font-bold mb-6">By the Numbers</h2>
-          <div className="flex flex-wrap justify-center gap-10">
-            {stats.map((item, idx) => (
-              <motion.div
-                key={idx}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 + idx * 0.2, duration: 0.5 }}
-                className="text-indigo-600 font-semibold text-xl"
-              >
-                <p>{item.value}</p>
-                <p className="text-sm text-gray-500 font-normal">{item.label}</p>
-              </motion.div>
-            ))}
-          </div>
-        </section>
-
-        {/* Tech Stack */}
-        <section className="text-center">
-          <h2 className="text-2xl font-bold mb-4">Powered By</h2>
-          <div className="flex flex-wrap justify-center gap-6 text-gray-700 text-lg">
-            <span>Next.js</span>
-            <span>Firebase</span>
-            <span>Tailwind CSS</span>
-            <span>Framer Motion</span>
-          </div>
-        </section>
-
-        {/* CTA */}
-        <section className="text-center">
-          <h3 className="text-xl font-semibold mb-3">Ready to explore our collection?</h3>
-          <a
-            href="/"
-            className="inline-block bg-indigo-600 text-white px-6 py-3 rounded-full shadow hover:bg-indigo-700 transition"
+        <main className="max-w-7xl mx-auto px-8 py-20">
+          {/* Cards Section */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="flex justify-center gap-20 flex-wrap"
           >
-            Visit the Shop
-          </a>
-        </section>
-      </motion.main>
+            {cards.map(({ title, frontContent, backContent }, i) => (
+              <div
+                key={i}
+                className="group perspective w-80 h-96 cursor-pointer"
+              >
+                <div className="relative w-full h-full duration-700 transform-style preserve-3d group-hover:rotate-y-180 rounded-xl shadow-2xl">
+                  {/* Front Side */}
+                  <div className="backface-hidden bg-gradient-to-br from-pink-500 via-red-500 to-yellow-400 rounded-xl flex flex-col justify-center items-center p-10 text-center shadow-lg">
+                    <h2 className="text-4xl font-extrabold mb-6 tracking-widest text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.8)]">
+                      {title}
+                    </h2>
+                    <p className="text-xl font-semibold text-white drop-shadow-md">
+                      {frontContent}
+                    </p>
+                  </div>
 
-      {/* Footer */}
-      <footer className="py-6 bg-white shadow mt-16">
-        <div className="max-w-5xl mx-auto px-4 text-sm text-center text-gray-500">
-          © {new Date().getFullYear()} YourStore Inc. All rights reserved.
-        </div>
-      </footer>
-    </div>
+                  {/* Back Side */}
+                  <div className="backface-hidden rotate-y-180 bg-black bg-opacity-90 border-4 border-pink-600 rounded-xl shadow-2xl p-8 flex items-center justify-center text-center text-pink-400 font-semibold text-lg leading-relaxed tracking-wide drop-shadow-[0_0_10px_rgba(255,105,180,0.8)]">
+                    <div>{backContent}</div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </motion.div>
+
+          {/* Core Values Section */}
+          <section className="mt-32 max-w-5xl mx-auto px-6">
+            <h2 className="text-5xl font-extrabold mb-12 text-center bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 via-red-500 to-pink-600 drop-shadow-lg">
+              Our Core Values
+            </h2>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10">
+              {coreValues.map(({ icon, title, description }, idx) => (
+                <div
+                  key={idx}
+                  className="bg-gradient-to-tr from-pink-600 via-red-600 to-yellow-500 rounded-2xl p-8 shadow-lg text-center cursor-default transform hover:scale-105 transition-transform duration-300"
+                >
+                  <div className="text-6xl mb-4">{icon}</div>
+                  <h3 className="text-2xl font-bold mb-3 text-white drop-shadow-md">
+                    {title}
+                  </h3>
+                  <p className="text-white font-semibold leading-relaxed drop-shadow-sm">
+                    {description}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </section>
+        </main>
+
+        <footer className="py-6 border-t border-pink-700 text-center text-sm text-pink-300 font-semibold tracking-wide">
+          © {new Date().getFullYear()} Livedrop Inc. All rights reserved.
+        </footer>
+
+        <style jsx>{`
+          .perspective {
+            perspective: 1500px;
+          }
+          .transform-style {
+            transform-style: preserve-3d;
+          }
+          .backface-hidden {
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            -moz-backface-visibility: hidden;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            border-radius: 1rem;
+          }
+          .rotate-y-180 {
+            transform: rotateY(180deg);
+          }
+          .group:hover .group-hover\\:rotate-y-180 {
+            transform: rotateY(180deg);
+          }
+          /* Poppins font fallback */
+          :global(.font-poppins) {
+            font-family: 'Poppins', sans-serif;
+          }
+        `}</style>
+      </div>
+    </>
   )
 }

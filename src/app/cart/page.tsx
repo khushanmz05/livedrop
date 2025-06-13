@@ -4,29 +4,73 @@ import { useCart } from '../../../lib/cartContext'
 import { useRouter } from 'next/navigation'
 import Footer from '../components/Footer'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useEffect, useState } from 'react'
 
 export default function CartPage() {
-  const { cart, removeFromCart } = useCart()
+  const { cart, removeFromCart, decreaseStockOnCheckout } = useCart() // moved inside here
   const total = cart.reduce((sum, item) => sum + item.price * (item.quantity || 1), 0)
   const router = useRouter()
 
   const handleCheckout = () => {
     if (cart.length === 0) return
-    const allProductIDs = cart.map(item => item.id).join(',')
-    router.push(`/checkout?ids=${allProductIDs}`)
-  }  
+    decreaseStockOnCheckout(cart) // <-- update stock here
+    const productIds = cart.map(item => item.id).join(',')
+    router.push(`/payment?productIds=${productIds}`)
+  }
+
+  const [showPopup, setShowPopup] = useState(false)
+  const [latestItem, setLatestItem] = useState(null)
+
+  useEffect(() => {
+    if (cart.length > 0) {
+      const latest = cart[cart.length - 1]
+      setLatestItem(latest)
+      setShowPopup(true)
+
+      const timer = setTimeout(() => setShowPopup(false), 4000)
+      return () => clearTimeout(timer)
+    }
+  }, [cart])
 
   return (
     <>
-      <main className="max-w-4xl mx-auto p-6 min-h-[80vh] flex flex-col">
-        <h1 className="text-4xl font-extrabold mb-10 text-center text-white-900">🛒 Your Cart</h1>
+      {/* Popup Notification */}
+      <AnimatePresence>
+        {showPopup && latestItem && (
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 40 }}
+            transition={{ duration: 0.4 }}
+            className="fixed bottom-6 right-6 z-50 bg-white/10 backdrop-blur-lg border border-white/20 p-4 rounded-2xl shadow-xl flex items-center gap-4"
+          >
+            {latestItem.image && (
+              <img
+                src={latestItem.image}
+                alt={latestItem.title}
+                className="w-14 h-14 object-cover rounded-lg border border-gray-300 shadow"
+              />
+            )}
+            <div>
+              <p className="text-white font-semibold text-sm mb-1">Added to cart</p>
+              <p className="text-white text-sm">{latestItem.title}</p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Main Cart Section */}
+      <main className="max-w-5xl mx-auto px-6 py-10 min-h-[80vh] flex flex-col font-sans">
+        <h1 className="text-5xl font-extrabold mb-12 text-center text-white tracking-tight">
+          🛒 Your Cart
+        </h1>
 
         {cart.length === 0 ? (
-          <div className="flex flex-col items-center justify-center grow text-center text-gray-500 space-y-4">
-            <p className="text-lg md:text-xl font-medium">Your cart is empty.</p>
+          <div className="flex flex-col items-center justify-center grow text-center text-gray-400 space-y-6">
+            <p className="text-xl md:text-2xl font-medium">Your cart is feeling lonely 😢</p>
             <button
               onClick={() => router.push('/products')}
-              className="mt-2 inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded shadow transition"
+              className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-bold px-8 py-3 rounded-full shadow-lg transition duration-300"
               aria-label="Browse Products"
             >
               Browse Products
@@ -38,31 +82,31 @@ export default function CartPage() {
               {cart.map((item) => (
                 <motion.div
                   key={item.id}
-                  initial={{ opacity: 0, y: 10 }}
+                  initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.3 }}
-                  className="flex items-center gap-4 border-b pb-4"
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.4, ease: 'easeInOut' }}
+                  className="flex items-center gap-6 bg-white/10 backdrop-blur-md rounded-2xl p-5 shadow-lg border border-white/20"
                 >
                   {item.image && (
                     <img
                       src={item.image}
                       alt={item.title}
-                      className="w-20 h-20 object-cover rounded shadow"
+                      className="w-24 h-24 object-cover rounded-xl shadow-md border border-gray-300"
                     />
                   )}
 
-                  <div className="flex-1">
-                    <h2 className="text-lg font-semibold text-gray-900">{item.title}</h2>
-                    <p className="text-gray-700">${item.price.toFixed(2)}</p>
+                  <div className="flex-1 space-y-1">
+                    <h2 className="text-xl font-semibold text-white">{item.title}</h2>
+                    <p className="text-white/80 text-md">${item.price.toFixed(2)}</p>
                     {item.quantity && (
-                      <p className="text-sm text-gray-500">Qty: {item.quantity}</p>
+                      <p className="text-sm text-white/60">Quantity: {item.quantity}</p>
                     )}
                   </div>
 
                   <button
                     onClick={() => removeFromCart(item.id)}
-                    className="text-red-600 hover:underline text-sm font-medium"
+                    className="text-red-500 hover:text-red-600 hover:underline text-sm font-medium transition"
                     aria-label={`Remove ${item.title} from cart`}
                   >
                     Remove
@@ -71,13 +115,13 @@ export default function CartPage() {
               ))}
             </AnimatePresence>
 
-            <div className="pt-6 border-t mt-auto text-right">
-              <p className="text-2xl font-bold mb-3 text-gray-900">
-                Total: <span className="text-blue-700">${total.toFixed(2)}</span>
+            <div className="pt-8 border-t border-white/20 mt-auto text-right">
+              <p className="text-3xl font-bold mb-5 text-white">
+                Total: <span className="text-blue-400">${total.toFixed(2)}</span>
               </p>
               <button
                 onClick={handleCheckout}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded shadow transition font-semibold"
+                className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-8 py-3 rounded-full font-semibold shadow-lg transition duration-300"
                 aria-label="Proceed to Checkout"
               >
                 Proceed to Checkout
