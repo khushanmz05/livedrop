@@ -65,6 +65,10 @@ export default function CheckoutPage() {
     fetchProduct()
   }, [productId])
 
+  const normalizedImage = product && product.image
+  ? product.image.replace(/^(\.\.\/)+/, '') // remove any ../ at start
+  : '';
+
   const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault()
   setError(null)
@@ -151,13 +155,14 @@ export default function CheckoutPage() {
       <h1 className="text-3xl font-extrabold mb-6 text-gray-800 animate-slideDown">Checkout</h1>
 
       <div className="mb-8 flex flex-col items-center space-y-3 animate-fadeIn">
+        
         {product?.image && (
           <Image
-            src={product.image}
+            src={`/${normalizedImage.trim()}`}
             alt={product.title}
             width={160}
             height={160}
-            className="object-contain rounded shadow animate-fadeIn"
+            className="object-contai  n rounded shadow animate-fadeIn"
         />
         )}
         <p className="text-xl font-semibold text-gray-900">{product?.title}</p>
