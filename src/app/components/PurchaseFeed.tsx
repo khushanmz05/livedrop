@@ -39,7 +39,7 @@ export default function PurchaseFeed({ refreshTrigger }: PurchaseFeedProps) {
     }
 
     fetchPurchases()
-  }, [refreshTrigger]) // <--- run effect every time refreshTrigger changes
+  }, [refreshTrigger])
   
   return (
     <div className="bg-black border border-purple-800 rounded-lg p-4 shadow-md">

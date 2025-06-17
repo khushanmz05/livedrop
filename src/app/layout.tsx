@@ -6,7 +6,7 @@ import Navbar from './components/Navbar'
 import '../../styles/global.css'
 
 export const metadata = {
-  title: 'My Store',
+  title: 'Livedrop',
   description: 'Next.js Firebase Store',
 }
 

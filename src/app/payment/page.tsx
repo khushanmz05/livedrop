@@ -13,8 +13,6 @@ export default function PaymentPage() {
   const [loading, setLoading] = useState(false);
   const [successId, setSuccessId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-
-  // Payment form state
   const [name, setName] = useState('');
   const [cardNumber, setCardNumber] = useState('');
   const [expiry, setExpiry] = useState('');
@@ -155,7 +153,7 @@ export default function PaymentPage() {
   );
 }
 
-const styles = {
+const styles: { [key: string]: React.CSSProperties } = {
   container: {
     maxWidth: 600,
     margin: '2rem auto',

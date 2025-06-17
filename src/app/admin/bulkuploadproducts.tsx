@@ -59,8 +59,8 @@ export default function BulkUploadProducts() {
           title: product.title,
           image: product.image,
           dropTime: Timestamp.fromDate(new Date(product.dropTime)),
-          price: parseFloat(product.price as any),
-          stock: parseInt(product.stock as any),
+          price: parseFloat(product.price.toString()),
+          stock: parseInt(product.stock.toString(), 10),
           description: product.description,
         })
       }

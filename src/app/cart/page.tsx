@@ -19,7 +19,7 @@ export default function CartPage() {
   }
 
   const [showPopup, setShowPopup] = useState(false)
-  const [latestItem, setLatestItem] = useState(null)
+  const [latestItem, setLatestItem] = useState<{ id: string; title: string; image?: string; price: number; quantity?: number } | null>(null)
 
   useEffect(() => {
     if (cart.length > 0) {
