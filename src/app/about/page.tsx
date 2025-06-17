@@ -10,8 +10,6 @@ export default function AboutPage() {
       backContent: (
         <>
           <p className="mb-2">👩‍💻 <strong>Khushan</strong> — Lead Developer</p>
-          <p>🧑‍🎨 <strong>Jane</strong> — UI/UX Designer</p>
-          <p>🛠️ <strong>Mike</strong> — Backend Engineer</p>
         </>
       ),
     },
