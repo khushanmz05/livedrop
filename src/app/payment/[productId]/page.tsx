@@ -18,7 +18,7 @@ type Product = {
 export default function CheckoutPage() {
   const router = useRouter()
   const params = useParams()
-  const productId = params?.productId || ''
+  const productId = Array.isArray(params?.productId) ? params.productId[0] : params?.productId || ''
 
   const [product, setProduct] = useState<Product | null>(null)
   const [loading, setLoading] = useState(true)
@@ -112,6 +112,8 @@ export default function CheckoutPage() {
     } else {
       setError('Transaction failed.')
     }
+  }
+}
     
   if (loading) {
     return (
@@ -161,7 +163,9 @@ export default function CheckoutPage() {
         <p className="text-xl font-semibold text-gray-900">{product?.title}</p>
         <p className="text-lg font-medium text-indigo-700">${product?.price.toFixed(2)}</p>
         <p className="text-sm text-gray-500">
-          {product?.stock > 0 ? `${product.stock} in stock` : 'Out of stock'}
+          {typeof product?.stock === 'number' && product.stock > 0
+            ? `${product.stock} in stock`
+            : 'Out of stock'}
         </p>
       </div>
 
@@ -243,6 +247,5 @@ export default function CheckoutPage() {
         </button>
       </form>
     </main>
-  )}
-  }
+  )
 }

@@ -197,6 +197,7 @@ export default function ProductsPage() {
                                 id: product.id,
                                 title: product.title,
                                 price: product.price,
+                                image: product.image,
                               })
                             }
                             disabled={product.stock <= 0}

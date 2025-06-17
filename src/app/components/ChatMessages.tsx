@@ -1,9 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { collection, onSnapshot, query, orderBy } from 'firebase/firestore'
-import { db } from '../../../lib/firebase'
-import type { Timestamp } from 'firebase/firestore'
+import React from 'react'
 
 type Message = {
   id: string
@@ -12,30 +9,11 @@ type Message = {
   timestamp?: Date
 }
 
-export default function ChatMessages() {
-  const [messages, setMessages] = useState<Message[]>([])
+interface ChatMessagesProps {
+  messages: Message[]
+}
 
-  useEffect(() => {
-    // Reference to your messages collection
-    const q = query(collection(db, 'messages'), orderBy('timestamp', 'asc'))
-
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const msgs: Message[] = snapshot.docs.map(doc => {
-        const data = doc.data()
-        return {
-          id: doc.id,
-          text: data.text,
-          sender: data.sender,
-          // Convert Firestore Timestamp to JS Date
-          timestamp: (data.timestamp as Timestamp)?.toDate() ?? undefined,
-        }
-      })
-      setMessages(msgs)
-    })
-
-    return () => unsubscribe()
-  }, [])
-
+export default function ChatMessages({ messages }: ChatMessagesProps) {
   return (
     <div className="space-y-2 text-sm">
       {messages.map(msg => (
