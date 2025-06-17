@@ -12,6 +12,7 @@ import BulkUploadProducts from './bulkuploadproducts'
 import { analyticsPromise } from '../../../lib/firebase'
 import { logEvent } from 'firebase/analytics'
 
+const adminEmails = ['khushan.kanakrai5@gmail.com', 'admin@gmail.com']
 
 type Product = {
   id: string
@@ -20,15 +21,12 @@ type Product = {
   price: number
   stock: number
   description: string
-  dropTime?: any
+  dropTime?: Timestamp | null
 }
 
 export default function AdminProductManager() {
-  const { user, login, logout } = useAuth()
+  const { user } = useAuth()
   const router = useRouter()
-
-  // List your admin emails here:
-  const adminEmails = ['khushan.kanakrai5@gmail.com', 'admin@gmail.com']
 
   // Redirect non-admin users
   useEffect(() => {
@@ -41,7 +39,6 @@ export default function AdminProductManager() {
     }
   }, [user, router])
 
-  // Your existing state and functions...
 
   // Form states
   const [title, setTitle] = useState('')
@@ -170,7 +167,7 @@ export default function AdminProductManager() {
       alert('Error saving product')
     }
   }
-  const logAdminEvent = async (eventName: string, eventData: any = {}) => {
+  const logAdminEvent = async (eventName: string, eventData: Record<string, unknown> = {}) => {
     const analytics = await analyticsPromise
     if (analytics) {
       logEvent(analytics, eventName, eventData)
