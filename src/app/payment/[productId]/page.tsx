@@ -66,53 +66,53 @@ export default function CheckoutPage() {
   }, [productId])
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError(null)
+  e.preventDefault()
+  setError(null)
 
-    if (!name.trim() || !cardNumber.trim() || !expiry.trim() || !cvv.trim()) {
-      setError('Please fill in all fields.')
-      return
-    }
-
-    if (!product) {
-      setError('Product not loaded.')
-      return
-    }
-
-    try {
-      await runTransaction(db, async (transaction) => {
-        const ref = doc(db, 'products', product.id)
-        const snap = await transaction.get(ref)
-
-        if (!snap.exists()) throw new Error(`${product.title} not found`)
-        const stock = snap.data().stock
-
-        if (stock <= 0) throw new Error(`${product.title} is out of stock`)
-        transaction.update(ref, { stock: stock - 1 })
-      })
-
-      const auth = getAuth()
-      const currentUser = auth.currentUser
-      const username = currentUser
-        ? currentUser.displayName || currentUser.email || 'Anonymous'
-        : 'Guest'
-
-      await addDoc(collection(db, 'purchases'), {
-        productId: product.id,
-        title: product.title,
-        price: product.price,
-        user: username,
-        timestamp: new Date(),
-      })
-
-      setSuccess(true)
-    } catch (err: unknown) {
-  if (err instanceof Error) {
-    setError(err.message)
-  } else {
-    setError('Transaction failed.')
+  if (!name.trim() || !cardNumber.trim() || !expiry.trim() || !cvv.trim()) {
+    setError('Please fill in all fields.')
+    return
   }
 
+  if (!product) {
+    setError('Product not loaded.')
+    return
+  }
+
+  try {
+    await runTransaction(db, async (transaction) => {
+      const ref = doc(db, 'products', product.id)
+      const snap = await transaction.get(ref)
+
+      if (!snap.exists()) throw new Error(`${product.title} not found`)
+      const stock = snap.data().stock
+
+      if (stock <= 0) throw new Error(`${product.title} is out of stock`)
+      transaction.update(ref, { stock: stock - 1 })
+    })
+
+    const auth = getAuth()
+    const currentUser = auth.currentUser
+    const username = currentUser
+      ? currentUser.displayName || currentUser.email || 'Anonymous'
+      : 'Guest'
+
+    await addDoc(collection(db, 'purchases'), {
+      productId: product.id,
+      title: product.title,
+      price: product.price,
+      user: username,
+      timestamp: new Date(),
+    })
+
+    setSuccess(true)
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      setError(err.message)
+    } else {
+      setError('Transaction failed.')
+    }
+    
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen p-6 animate-fadeIn">
