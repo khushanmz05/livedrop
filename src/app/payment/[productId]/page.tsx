@@ -185,7 +185,7 @@ export default function CheckoutPage() {
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full border rounded px-4 py-2 focus:ring-2 focus:ring-indigo-500 outline-none transition duration-300 ease-in-out hover:shadow-lg"
+              className="w-full border rounded px-4 py-2 text-black focus:ring-2 focus:ring-indigo-500 outline-none transition duration-300 ease-in-out hover:shadow-lg"
               placeholder="John Doe"
               required
             />
@@ -203,7 +203,7 @@ export default function CheckoutPage() {
               onChange={(e) =>
                 setCardNumber(e.target.value.replace(/\D/g, '').slice(0, 16))
               }
-              className="w-full border rounded px-4 py-2 focus:ring-2 focus:ring-indigo-500 outline-none transition duration-300 ease-in-out hover:shadow-lg"
+              className="w-full border rounded px-4 py-2 text-black focus:ring-2 focus:ring-indigo-500 outline-none transition duration-300 ease-in-out hover:shadow-lg"
               placeholder="1234 5678 9012 3456"
               maxLength={16}
               required
@@ -222,7 +222,7 @@ export default function CheckoutPage() {
                 onChange={(e) => setExpiry(e.target.value)}
                 placeholder="MM/YY"
                 maxLength={5}
-                className="w-full border rounded px-4 py-2 focus:ring-2 focus:ring-indigo-500 outline-none transition duration-300 ease-in-out hover:shadow-lg"
+                className="w-full border rounded px-4 py-2 text-black focus:ring-2 focus:ring-indigo-500 outline-none transition duration-300 ease-in-out hover:shadow-lg"
                 required
               />
             </div>
@@ -237,7 +237,7 @@ export default function CheckoutPage() {
                 onChange={(e) => setCvv(e.target.value.replace(/\D/g, '').slice(0, 4))}
                 maxLength={4}
                 placeholder="123"
-                className="w-full border rounded px-4 py-2 focus:ring-2 focus:ring-indigo-500 outline-none transition duration-300 ease-in-out hover:shadow-lg"
+                className="w-full border rounded px-4 py-2 text-black focus:ring-2 focus:ring-indigo-500 outline-none transition duration-300 ease-in-out hover:shadow-lg"
                 required
               />
             </div>
