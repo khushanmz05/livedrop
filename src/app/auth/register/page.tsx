@@ -20,6 +20,7 @@ export default function RegisterPage() {
     setError(err.message)
   } else {
     setError('An unexpected error occurred')
+    }
   }
 }
 
@@ -49,5 +50,4 @@ export default function RegisterPage() {
       {error && <p className="text-red-500 mt-2">{error}</p>}
     </main>
   )
-  }
 }
