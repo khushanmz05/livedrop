@@ -251,15 +251,21 @@ export default function Home() {
           <PurchaseFeed refreshTrigger={refreshPurchases} />
         </div>
 
-        <div className="w-full md:w-[28rem] ml-auto flex flex-col">
-          <div className="h-[20rem] bg-gradient-to-br from-gray-800 via-gray-900 to-black p-4 rounded-lg border border-purple-700 shadow-lg flex-grow flex flex-col">
-            <h2 className="text-xl text-pink-400 font-bold mb-4">Live Chat</h2>
-            <ChatMessages messages={messages} />
-            <ChatInput
-              onSend={handleNewMessage}
-              messages={messages}
-              setMessages={setMessages}
-            />
+       <div className="w-full md:w-[28rem] ml-auto flex flex-col">
+        <div className="h-[21rem] bg-gradient-to-br from-gray-800 via-gray-900 to-black p-4 rounded-lg border border-purple-700 shadow-lg flex flex-col">
+    <h2 className="text-xl text-pink-400 font-bold mb-4">Live Chat</h2>
+
+    {/* Scrollable message box */}
+    <div className="flex-1 overflow-y-auto mb-4 pr-1">
+      <ChatMessages messages={messages} />
+    </div>
+
+    {/* Chat input box fixed at the bottom */}
+    <ChatInput
+      onSend={handleNewMessage}
+      messages={messages}
+      setMessages={setMessages}
+    />
           </div>
         </div>
       </div>

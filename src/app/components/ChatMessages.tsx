@@ -3,6 +3,7 @@
 import React from 'react'
 
 type Message = {
+  user: string
   id: string
   text: string
   sender?: string
@@ -20,7 +21,7 @@ export default function ChatMessages({ messages }: ChatMessagesProps) {
         <div
           key={msg.id}
           className={`p-2 rounded-md max-w-xs ${
-            msg.sender === 'bot'
+            msg.user === 'bot'
               ? 'bg-purple-700/30 text-purple-100 self-start'
               : 'bg-pink-600/30 text-pink-100 self-end ml-auto'
           }`}
