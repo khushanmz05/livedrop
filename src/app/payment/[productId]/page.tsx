@@ -106,9 +106,11 @@ export default function CheckoutPage() {
       })
 
       setSuccess(true)
-    } catch (err: any) {
-      setError(err.message || 'Transaction failed.')
-    }
+    } catch (err: unknown) {
+  if (err instanceof Error) {
+    setError(err.message)
+  } else {
+    setError('Transaction failed.')
   }
 
   if (loading) {
@@ -241,5 +243,6 @@ export default function CheckoutPage() {
         </button>
       </form>
     </main>
-  )
+  )}
+  }
 }
