@@ -12,13 +12,17 @@ export default function LoginPage() {
   const router = useRouter()
 
   const handleLogin = async () => {
-    try {
-      await signInWithEmailAndPassword(auth, email, password)
-      router.push('/')
-    } catch (err: any) {
-      setError('Invalid email or password. Please try again.')
+  try {
+    await signInWithEmailAndPassword(auth, email, password)
+    router.push('/')
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      console.error(err.message)
     }
+    setError('Invalid email or password. Please try again.')
   }
+}
+
 
   return (
     <div className="min-h-screen bg-black text-white flex flex-col justify-between">

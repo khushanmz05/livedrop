@@ -5,7 +5,6 @@ import { collection, onSnapshot } from 'firebase/firestore'
 import { db } from '../../../lib/firebase'
 import Countdown from 'react-countdown'
 import Link from 'next/link'
-import { useCart } from '../../../lib/cartContext'
 
 type Product = {
   id: string

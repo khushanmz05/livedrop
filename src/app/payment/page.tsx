@@ -51,7 +51,7 @@ export default function PaymentPage() {
       const orderId = await saveOrder(products, totalPrice);
       setSuccessId(orderId);
       clearCart();
-    } catch (err) {
+    } catch {
       setError('Payment failed. Please try again.');
     } finally {
       setLoading(false);

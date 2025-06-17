@@ -1,10 +1,11 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useParams } from 'next/navigation'
 import { db } from '../../../../lib/firebase'
 import { doc, getDoc, runTransaction, collection, addDoc } from 'firebase/firestore'
 import { getAuth } from 'firebase/auth'
+import Image from 'next/image'
 
 type Product = {
   id: string
@@ -14,10 +15,10 @@ type Product = {
   stock: number
 }
 
-export default function CheckoutPage({ params }: { params: Promise<{ productId: string }> }) {
+export default function CheckoutPage() {
   const router = useRouter()
-  const resolvedParams = React.use(params)
-  const productId = resolvedParams.productId
+  const params = useParams()
+  const productId = params?.productId || ''
 
   const [product, setProduct] = useState<Product | null>(null)
   const [loading, setLoading] = useState(true)
@@ -53,8 +54,9 @@ export default function CheckoutPage({ params }: { params: Promise<{ productId: 
           price: data.price,
           stock: data.stock,
         })
-      } catch (err: any) {
-        setError(err.message || 'Failed to fetch product')
+     } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : String(err);
+        setError(errorMessage);
       } finally {
         setLoading(false)
       }
@@ -146,11 +148,13 @@ export default function CheckoutPage({ params }: { params: Promise<{ productId: 
 
       <div className="mb-8 flex flex-col items-center space-y-3 animate-fadeIn">
         {product?.image && (
-          <img
+          <Image
             src={product.image}
             alt={product.title}
-            className="w-40 h-40 object-contain rounded shadow animate-fadeIn"
-          />
+            width={160}
+            height={160}
+            className="object-contain rounded shadow animate-fadeIn"
+        />
         )}
         <p className="text-xl font-semibold text-gray-900">{product?.title}</p>
         <p className="text-lg font-medium text-indigo-700">${product?.price.toFixed(2)}</p>

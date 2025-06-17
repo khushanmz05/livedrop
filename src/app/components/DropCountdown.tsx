@@ -13,11 +13,7 @@ export default function DropCountdown({
   onDropEnd,
   durationSeconds = 300,
 }: DropCountdownProps) {
-  if (!dropTime || isNaN(dropTime.getTime())) {
-    // silently return null if no dropTime or invalid
-    return null
-  }
-
+  // Always call hooks, no early return
   const [now, setNow] = useState(new Date());
   const [status, setStatus] = useState<"upcoming" | "live" | "ended">("upcoming");
 
@@ -27,6 +23,8 @@ export default function DropCountdown({
   }, []);
 
   useEffect(() => {
+    if (!dropTime || isNaN(dropTime.getTime())) return;
+
     const dropStart = dropTime.getTime();
     const dropEnd = dropStart + durationSeconds * 1000;
     const current = now.getTime();
@@ -46,15 +44,20 @@ export default function DropCountdown({
     }
   }, [now, dropTime, durationSeconds, status, onDropStart, onDropEnd]);
 
+  // If dropTime is invalid, render nothing
+  if (!dropTime || isNaN(dropTime.getTime())) {
+    return null;
+  }
+
   const getTimeLeft = () => {
-    let targetTime =
+    const targetTime =
       status === "upcoming"
         ? dropTime.getTime()
         : dropTime.getTime() + durationSeconds * 1000;
-    let diff = Math.max(0, targetTime - now.getTime());
-    let seconds = Math.floor(diff / 1000) % 60;
-    let minutes = Math.floor(diff / (1000 * 60)) % 60;
-    let hours = Math.floor(diff / (1000 * 60 * 60));
+    const diff = Math.max(0, targetTime - now.getTime());
+    const seconds = Math.floor(diff / 1000) % 60;
+    const minutes = Math.floor(diff / (1000 * 60)) % 60;
+    const hours = Math.floor(diff / (1000 * 60 * 60));
     return { hours, minutes, seconds };
   };
 
@@ -64,9 +67,9 @@ export default function DropCountdown({
     <div>
       {status === "upcoming" && (
         <p>
-         <span className="font-bold text-red-300">
-          Drop starts in: {hours}h {minutes}m {seconds}s
-        </span>
+          <span className="font-bold text-red-300">
+            Drop starts in: {hours}h {minutes}m {seconds}s
+          </span>
         </p>
       )}
       {status === "live" && (
