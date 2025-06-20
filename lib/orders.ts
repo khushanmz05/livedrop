@@ -10,11 +10,25 @@ export async function saveOrder(items: CartItem[], total: number, userId?: strin
       total,
       userId: userId || null,
       createdAt: serverTimestamp(),
-      status: "pending", // you can track order status here
+      status: "pending",
     });
+
+    // Save individual purchases for PurchaseFeed
+    await Promise.all(
+      items.map(item =>
+        addDoc(collection(db, 'purchases'), {
+          title: item.title,
+          price: item.price * item.quantity,
+          user: userId || 'Guest',
+          timestamp: serverTimestamp(),
+        })
+      )
+    );
+
     return docRef.id;
   } catch (error) {
     console.error("Error saving order: ", error);
     throw error;
   }
 }
+

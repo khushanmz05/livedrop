@@ -5,18 +5,46 @@ import { useRouter } from 'next/navigation'
 import Footer from '../components/Footer'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useEffect, useState } from 'react'
+import { addDoc, collection, serverTimestamp } from 'firebase/firestore'
+import { db } from '../../../lib/firebase'
+import { getAuth } from 'firebase/auth'
+
 
 export default function CartPage() {
   const { cart, removeFromCart, decreaseStockOnCheckout } = useCart() // moved inside here
   const total = cart.reduce((sum, item) => sum + item.price * (item.quantity || 1), 0)
   const router = useRouter()
 
-  const handleCheckout = () => {
-    if (cart.length === 0) return
-    decreaseStockOnCheckout(cart) // <-- update stock here
+  const handleCheckout = async () => {
+  if (cart.length === 0) return
+
+  const auth = getAuth()
+  const user = auth.currentUser
+  const username = user ? user.displayName || user.email || 'Guest' : ''
+
+  try {
+    // Submit purchase to Firestore
+    await addDoc(collection(db, 'purchases'), {
+      user: username,
+      items: cart.map(item => ({
+        id: item.id,
+        title: item.title,
+        price: item.price,
+        quantity: item.quantity,
+      })),
+      total: total,
+      timestamp: serverTimestamp(),
+    })
+
+    decreaseStockOnCheckout(cart)
+
     const productIds = cart.map(item => item.id).join(',')
     router.push(`/payment?productIds=${productIds}`)
+  } catch (error) {
+    console.error('Checkout failed:', error)
+    // Optionally show error to user
   }
+}
 
   const [showPopup, setShowPopup] = useState(false)
   const [latestItem, setLatestItem] = useState<{ id: string; title: string; image?: string; price: number; quantity?: number } | null>(null)

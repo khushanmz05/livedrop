@@ -16,8 +16,15 @@ export default function PaymentPage() {
   const [error, setError] = useState<string | null>(null);
   const [name, setName] = useState('');
   const [cardNumber, setCardNumber] = useState('');
+  const [cardType, setCardType] = useState<'Visa' | 'MasterCard' | 'AmEx' | 'Discover' | 'Unknown'>('Unknown')
   const [expiry, setExpiry] = useState('');
   const [cvc, setCvc] = useState('');
+
+const handleCardInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const raw = e.target.value.replace(/\D/g, '').slice(0, 16);
+  setCardNumber(raw);
+  setCardType(getCardType(raw));
+};
 
   const totalPrice = products.reduce(
     (total, item) => total + item.price * item.quantity,
@@ -39,6 +46,17 @@ export default function PaymentPage() {
     /^\d{2}\/\d{2}$/.test(expiry) &&
     /^\d{3}$/.test(cvc);
 
+  function getCardType(cardNumber: string): 'Visa' | 'MasterCard' | 'AmEx' | 'Discover' | 'Unknown' {
+  const cleaned = cardNumber.replace(/\D/g, '')
+
+  if (/^4/.test(cleaned)) return 'Visa'
+  if (/^5[1-5]/.test(cleaned)) return 'MasterCard'
+  if (/^3[47]/.test(cleaned)) return 'AmEx'
+  if (/^6(?:011|5)/.test(cleaned)) return 'Discover'
+
+  return 'Unknown'
+}
+
   async function handleConfirmPurchase() {
     if (!isFormValid()) {
       setError('Please fill out all payment details correctly.');
@@ -57,6 +75,26 @@ export default function PaymentPage() {
     } finally {
       setLoading(false);
     }
+  }
+
+  function handleExpiryChange(e: React.ChangeEvent<HTMLInputElement>) {
+  let value = e.target.value;
+
+  value = value.replace(/[^\d\/]/g, '');
+  if (value.length === 2 && !value.includes('/')) {
+    value = value + '/';
+  }
+  if (value.length > 5) {
+    value = value.slice(0, 5);
+  }
+  const [month, year] = value.split('/');
+  if (month) {
+    const monthNum = parseInt(month, 10);
+    if (monthNum < 1 || monthNum > 12) {
+      return;
+    }
+  }
+  setExpiry(value);
   }
 
   if (successId) {
@@ -109,20 +147,39 @@ export default function PaymentPage() {
           onChange={(e) => setName(e.target.value)}
           style={styles.input}
         />
-        <input
-          type="text"
-          placeholder="Card Number (16 digits)"
-          value={cardNumber}
-          onChange={(e) => setCardNumber(e.target.value)}
-          maxLength={16}
-          style={styles.input}
-        />
+        <div className="flex items-center space-x-5 mb-4">
+            <input
+              id="card"
+              type="text"
+              inputMode="numeric"
+              value={cardNumber}
+              onChange={handleCardInput}
+              className="w-full border rounded px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500 outline-none transition duration-300 ease-in-out hover:shadow-lg"
+              placeholder="1234 5678 9012 3456"
+              maxLength={16}
+              required
+            />
+            {cardType !== 'Unknown' && (
+              <img
+                src={
+                  cardType === 'Visa' ? 'https://img.icons8.com/color/48/visa.png' :
+                  cardType === 'MasterCard' ? 'https://img.icons8.com/color/48/mastercard-logo.png' :
+                  cardType === 'AmEx' ? 'https://img.icons8.com/color/48/amex.png' :
+                  cardType === 'Discover' ? 'https://img.icons8.com/color/48/discover.png' :
+                  ''
+                }
+                alt={cardType}
+                className="h-6"
+              />
+            )}
+          </div>
+
         <div style={styles.row}>
           <input
             type="text"
             placeholder="MM/YY"
             value={expiry}
-            onChange={(e) => setExpiry(e.target.value)}
+            onChange={handleExpiryChange}
             maxLength={5}
             style={{ ...styles.input, marginRight: 10 }}
           />

@@ -55,11 +55,11 @@ export default function PurchaseFeed({ refreshTrigger }: PurchaseFeedProps) {
             >
               <div>
                 <p className="font-medium">{p.user}</p>
-                <p className="text-xs text-gray-400">{p.title}
+                <p className="text-xs text-gray-400">
                     {p.title} · {formatDistanceToNow(p.timestamp, { addSuffix: true })}
                 </p>
               </div>
-              <span className="text-green-400 font-semibold">${p.price.toFixed(2)}</span>
+              <span className="text-green-400 font-semibold">${(p.price ?? 0).toFixed(2)}</span>
             </li>
           ))}
         </ul>

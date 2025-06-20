@@ -3,9 +3,10 @@
 import React, { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { db } from '../../../../lib/firebase'
-import { doc, getDoc, runTransaction, collection, addDoc } from 'firebase/firestore'
+import { doc, getDoc, runTransaction, collection, addDoc, serverTimestamp } from 'firebase/firestore'
 import { getAuth } from 'firebase/auth'
 import Image from 'next/image'
+import { CartItem, useCart } from '../../../../lib/cartContext'
 
 type Product = {
   id: string
@@ -15,7 +16,7 @@ type Product = {
   stock: number
 }
 
-export default function CheckoutPage() {
+export default function CheckoutPage() {  
   const router = useRouter()
   const params = useParams()
   const productId = Array.isArray(params?.productId) ? params.productId[0] : params?.productId || ''
@@ -27,8 +28,15 @@ export default function CheckoutPage() {
 
   const [name, setName] = useState('')
   const [cardNumber, setCardNumber] = useState('')
+  const [cardType, setCardType] = useState<'Visa' | 'MasterCard' | 'AmEx' | 'Discover' | 'Unknown'>('Unknown')
   const [expiry, setExpiry] = useState('')
   const [cvv, setCvv] = useState('')
+
+  const handleCardInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const raw = e.target.value.replace(/\D/g, '').slice(0, 16);
+  setCardNumber(raw);
+  setCardType(getCardType(raw));
+};
 
   useEffect(() => {
     if (!productId) {
@@ -106,8 +114,9 @@ export default function CheckoutPage() {
       title: product.title,
       price: product.price,
       user: username,
-      timestamp: new Date(),
+      timestamp: serverTimestamp(),
     })
+    
 
     setSuccess(true)
   } catch (err: unknown) {
@@ -118,6 +127,38 @@ export default function CheckoutPage() {
     }
   }
 }
+
+function handleExpiryChange(e: React.ChangeEvent<HTMLInputElement>) {
+  let value = e.target.value;
+
+  value = value.replace(/[^\d\/]/g, '');
+  if (value.length === 2 && !value.includes('/')) {
+    value = value + '/';
+  }
+  if (value.length > 5) {
+    value = value.slice(0, 5);
+  }
+  const [month, year] = value.split('/');
+  if (month) {
+    const monthNum = parseInt(month, 10);
+    if (monthNum < 1 || monthNum > 12) {
+      return;
+    }
+  }
+  setExpiry(value);
+  }
+
+function getCardType(cardNumber: string): 'Visa' | 'MasterCard' | 'AmEx' | 'Discover' | 'Unknown' {
+  const cleaned = cardNumber.replace(/\D/g, '')
+
+  if (/^4/.test(cleaned)) return 'Visa'
+  if (/^5[1-5]/.test(cleaned)) return 'MasterCard'
+  if (/^3[47]/.test(cleaned)) return 'AmEx'
+  if (/^6(?:011|5)/.test(cleaned)) return 'Discover'
+
+  return 'Unknown'
+}
+
     
   if (loading) {
     return (
@@ -135,20 +176,24 @@ export default function CheckoutPage() {
     )
   }
 
-  if (success) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen p-6 bg-green-50 animate-fadeIn">
-        <h2 className="text-3xl font-bold mb-6 text-green-700 animate-slideDown">✅ Purchase Successful!</h2>
-        <p className="text-xl font-medium mb-8 animate-slideUp">{product?.title}</p>
-        <button
-          onClick={() => router.push('/')}
-          className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-md font-semibold transition transform hover:scale-105 animate-button"
-        >
-          Back to Home
-        </button>
-      </div>
-    )
-  }
+ if (success) {
+  return (
+    <div className="flex flex-col items-center justify-center min-h-screen p-6 bg-green-50 animate-fadeIn">
+      <h2 className="text-3xl font-bold text-green-700 mb-4 animate-slideDown">
+        ✅ Purchase Successful!
+      </h2>
+      <p className="text-xl text-gray-800 mb-6 animate-slideUp">
+        {product?.title}
+      </p>
+      <button
+        onClick={() => router.push('/')}
+        className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold transition-transform duration-200 hover:scale-105 animate-button"
+      >
+        Back to Home
+      </button>
+    </div>
+  );
+}
 
   return (
     <main className="max-w-md mx-auto my-12 p-8 bg-white rounded-lg shadow-xl border border-gray-200 animate-fadeInUp">
@@ -191,23 +236,31 @@ export default function CheckoutPage() {
             />
           </div>
 
-          <div>
-            <label htmlFor="card" className="block font-medium text-gray-700 mb-1">
-              Card Number
-            </label>
+          <div className="flex items-center space-x-2">
             <input
               id="card"
               type="text"
               inputMode="numeric"
               value={cardNumber}
-              onChange={(e) =>
-                setCardNumber(e.target.value.replace(/\D/g, '').slice(0, 16))
-              }
+              onChange={handleCardInput}
               className="w-full border rounded px-4 py-2 text-black focus:ring-2 focus:ring-indigo-500 outline-none transition duration-300 ease-in-out hover:shadow-lg"
               placeholder="1234 5678 9012 3456"
               maxLength={16}
               required
             />
+            {cardType !== 'Unknown' && (
+              <img
+                src={
+                  cardType === 'Visa' ? 'https://img.icons8.com/color/48/visa.png' :
+                  cardType === 'MasterCard' ? 'https://img.icons8.com/color/48/mastercard-logo.png' :
+                  cardType === 'AmEx' ? 'https://img.icons8.com/color/48/amex.png' :
+                  cardType === 'Discover' ? 'https://img.icons8.com/color/48/discover.png' :
+                  ''
+                }
+                alt={cardType}
+                className="h-6"
+              />
+            )}
           </div>
 
           <div className="flex space-x-4">
@@ -219,7 +272,7 @@ export default function CheckoutPage() {
                 id="expiry"
                 type="text"
                 value={expiry}
-                onChange={(e) => setExpiry(e.target.value)}
+                onChange={handleExpiryChange}
                 placeholder="MM/YY"
                 maxLength={5}
                 className="w-full border rounded px-4 py-2 text-black focus:ring-2 focus:ring-indigo-500 outline-none transition duration-300 ease-in-out hover:shadow-lg"
