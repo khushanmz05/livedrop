@@ -6,7 +6,6 @@ import { db } from '../../../../lib/firebase'
 import { doc, getDoc, runTransaction, collection, addDoc, serverTimestamp } from 'firebase/firestore'
 import { getAuth } from 'firebase/auth'
 import Image from 'next/image'
-import { CartItem, useCart } from '../../../../lib/cartContext'
 
 type Product = {
   id: string
@@ -138,7 +137,7 @@ function handleExpiryChange(e: React.ChangeEvent<HTMLInputElement>) {
   if (value.length > 5) {
     value = value.slice(0, 5);
   }
-  const [month, year] = value.split('/');
+  const [month] = value.split('/');
   if (month) {
     const monthNum = parseInt(month, 10);
     if (monthNum < 1 || monthNum > 12) {
