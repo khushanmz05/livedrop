@@ -1,29 +1,42 @@
 'use client'
 
-import { createContext, useContext, useEffect, useState } from 'react'
-import { onAuthStateChanged, signInWithPopup, signOut, User } from 'firebase/auth'
+import { createContext, useContext, useEffect, useState, ReactNode } from 'react'
+import { 
+  onAuthStateChanged, 
+  signInWithPopup, 
+  signOut, 
+  User 
+} from 'firebase/auth'
 import { auth, provider } from './firebase'
 
 interface AuthContextType {
   user: User | null
-  login: () => void
-  logout: () => void
+  isAdmin: boolean
+  login: () => Promise<void>
+  logout: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
+// Replace with your actual admin email
+const ADMIN_EMAIL = 'khushan.kanakrai5@gmail.com'
+
+export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
+  const [isAdmin, setIsAdmin] = useState(false)
 
   useEffect(() => {
-    return onAuthStateChanged(auth, setUser)
+    return onAuthStateChanged(auth, currentUser => {
+      setUser(currentUser)
+      setIsAdmin(currentUser?.email === ADMIN_EMAIL)
+    })
   }, [])
 
-  const login = () => signInWithPopup(auth, provider)
-  const logout = () => signOut(auth)
+  const login = () => signInWithPopup(auth, provider).then(() => {})
+  const logout = () => signOut(auth).then(() => {})
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, isAdmin, login, logout }}>
       {children}
     </AuthContext.Provider>
   )

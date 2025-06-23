@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { collection, getDocs } from 'firebase/firestore'
 import { db } from '../../lib/firebase'
 import ChatInput from './components/ChatInput'
@@ -14,6 +14,7 @@ import PurchaseFeed from './components/PurchaseFeed'
 import { Unbounded } from 'next/font/google'
 import Image from 'next/image'
 import { Message } from './types'
+import { useAuth } from '../../lib/authContext'
 
 type Product = {
   id: string
@@ -29,6 +30,7 @@ const unbounded = Unbounded({ subsets: ['latin'], weight: ['400', '700', '900'] 
 
 export default function Home() {
   const router = useRouter()
+  const { user } = useAuth() // <-- top level hook
   const [products, setProducts] = useState<Product[]>([])
   const [searchTerm, setSearchTerm] = useState('')
   const [refreshPurchases, setRefreshPurchases] = useState(false)
@@ -68,11 +70,21 @@ export default function Home() {
   }, [])
 
   const handleAddToCart = (product: Product) => {
+    if (!user) {
+      alert('Please log in to add items to your cart.')
+      router.push('/auth/login')
+      return
+    }
     addToCart(product)
     alert(`Added "${product.title}" to cart.`)
   }
 
   const handleBuyNow = (product: Product) => {
+    if (!user) {
+      alert('Please log in to purchase items.')
+      router.push('/auth/login')
+      return
+    }
     router.push(`/payment/${product.id}`)
     setRefreshPurchases(prev => !prev)
   }
@@ -125,6 +137,16 @@ export default function Home() {
     }, 600)
   }
 
+  // Stable refs per product for CSSTransition
+  const productRefs = useRef<{ [key: string]: React.RefObject<HTMLDivElement | null> }>({})
+
+  const getRefForProduct = (id: string) => {
+    if (!productRefs.current[id]) {
+      productRefs.current[id] = React.createRef<HTMLDivElement>()
+    }
+    return productRefs.current[id]
+  }
+
   const filteredProducts = products.filter(
     product =>
       product.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -164,6 +186,7 @@ export default function Home() {
         ) : (
           <TransitionGroup component={null}>
             {filteredProducts.map(product => {
+              const nodeRef = getRefForProduct(product.id)
               const now = new Date()
               const isLive = !product.dropTime || product.dropTime <= now
               const hasValidDropTime =
@@ -176,8 +199,9 @@ export default function Home() {
                   key={product.id}
                   timeout={300}
                   classNames="fade-slide"
+                  nodeRef={nodeRef}
                 >
-                  <div className="relative group">
+                  <div className="relative group" ref={nodeRef}>
                     <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-pink-500 to-purple-700 blur-sm opacity-0 group-hover:opacity-40 transition duration-300" />
                     <div className="relative z-10 bg-white/5 backdrop-blur border border-white/10 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] flex flex-col">
                       <Image
@@ -251,21 +275,14 @@ export default function Home() {
           <PurchaseFeed refreshTrigger={refreshPurchases} />
         </div>
 
-       <div className="w-full md:w-[28rem] ml-auto flex flex-col">
-        <div className="h-[21rem] bg-gradient-to-br from-gray-800 via-gray-900 to-black p-4 rounded-lg border border-purple-700 shadow-lg flex flex-col">
-    <h2 className="text-xl text-pink-400 font-bold mb-4">Live Chat</h2>
-
-    {/* Scrollable message box */}
-    <div className="flex-1 overflow-y-auto mb-4 pr-1">
-      <ChatMessages messages={messages} />
-    </div>
-
-    {/* Chat input box fixed at the bottom */}
-    <ChatInput
-      onSend={handleNewMessage}
-      messages={messages}
-      setMessages={setMessages}
-    />
+        <div className="w-full md:w-[28rem] ml-auto flex flex-col">
+          <div className="h-[21rem] bg-gradient-to-br from-gray-800 via-gray-900 to-black p-4 rounded-lg border border-purple-700 shadow-lg flex flex-col">
+            <ChatMessages messages={messages} />
+            <ChatInput
+              onSend={handleNewMessage}
+              messages={messages}
+              setMessages={setMessages}
+            />
           </div>
         </div>
       </div>

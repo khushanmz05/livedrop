@@ -131,14 +131,6 @@ export default function AdminProductManager() {
           stock: parseInt(stock),
           description,
         })
-        await updateDoc(productRef, {
-          title,
-          image,
-          dropTime: Timestamp.fromDate(date),
-          price: parseFloat(price),
-          stock: parseInt(stock),
-          description,
-        })
         await logAdminEvent('product_updated', {
           id: editingProduct.id,
           title,
